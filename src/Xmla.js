@@ -6420,7 +6420,10 @@ Xmla.Dataset.Axis.prototype = {
         for (i = 0; i < n; i++) {
             el = childNodes[i];
             if (el.nodeType !== 1 || (!(property = memberProperties[el.nodeName]))) continue;
-            member[property.name] = property.converter(_getElementText(el));
+            if (_isUnd(property.converter))
+                member[property.name] =  _getElementText(el);
+            else
+                member[property.name] = property.converter(_getElementText(el));
         }
         return member;
     },
