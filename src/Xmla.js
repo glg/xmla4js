@@ -2031,12 +2031,11 @@ Xmla.prototype = {
             var responseXml = this.getResponseXML();
             var soapFault = _getElementsByTagNameNS(responseXml, _xmlnsSOAPenvelope, _xmlnsSOAPenvelopePrefix, "Fault");
             if (soapFault.length) {
-                //TODO: extract error info
-                soapFault = soapFault[0];
+                //just return the entire soap response which has the details of the fault
                 request.exception = new Xmla.Exception(
                     Xmla.Exception.TYPE_ERROR,
-                    _getElementsByTagName(soapFault, "faultcode")[0].childNodes[0].data,
-                    _getElementsByTagName(soapFault, "faultstring")[0].childNodes[0].data,
+                    'Soap fault',
+                    this.responseText,
                     null,
                     "_requestSuccess",
                     request
