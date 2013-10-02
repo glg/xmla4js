@@ -4956,6 +4956,7 @@ function _getValueConverter(type){
 }
 
 function _getElementValue(el) {
+    if (_isUnd(el)) return null;
     var txt = _getElementText(el),
         type = _getAttributeNS(el, _xmlnsSchemaInstance, _xmlnsSchemaInstancePrefix, "type"),
         converter
