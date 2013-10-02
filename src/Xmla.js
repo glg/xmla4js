@@ -6593,15 +6593,26 @@ Xmla.Dataset.Cellset.prototype = {
         for(i = 0; i < numPropertyNodes; i++) {
             propertyNode = propertyNodes[i];
             propertyNodeTagName = propertyNode.nodeName;
+            var propertyNodeType = _getAttribute(propertyNode, "type");
             //find the xsd:element node that describes this property
-            for (j = 0; j < numCellSchemaElements; j++) {
-                cellSchemaElement = cellSchemaElements[j];
-                if (_getAttribute(cellSchemaElement, "name") !== propertyNodeTagName) continue;
-                type = _getAttribute(cellSchemaElement, "type");
-                this._cellProperties[propertyNodeTagName] = _typeConverterMap[type];
-                this["cell" + propertyNodeTagName] = new Function("return this.cellProperty(\"" + propertyNodeTagName + "\")");
-                break;
+            // for our iis server CellInfo contains the property data type
+            if (_isUnd(propertyNodeType) || propertyNodeType == null){
+                for (j = 0; j < numCellSchemaElements; j++) {
+                    cellSchemaElement = cellSchemaElements[j];
+                    if (_getAttribute(cellSchemaElement, "name") !== propertyNodeTagName) continue;
+                    type = _getAttribute(cellSchemaElement, "type");
+                    propertyNodeType = type;
+                    this._cellProperties[propertyNodeTagName] = _typeConverterMap[type];
+                    this["cell" + propertyNodeTagName] = new Function("return this.cellProperty(\"" + propertyNodeTagName + "\")");
+                    break;
+                }
             }
+            //default to string if the property type is not found
+            if (!propertyNodeType){
+                propertyNodeType = 'xsd:string';
+            }
+            this._cellProperties[propertyNodeTagName] = _typeConverterMap['xsd:string'];
+            this["cell" + propertyNodeTagName] = new Function("return this.cellProperty(\"" + propertyNodeTagName + "\")");
         }
         this._cellNodes = _getElementsByTagNameNS(
             root, _xmlnsDataset, "", "Cell"
