@@ -6602,8 +6602,6 @@ Xmla.Dataset.Cellset.prototype = {
                     if (_getAttribute(cellSchemaElement, "name") !== propertyNodeTagName) continue;
                     type = _getAttribute(cellSchemaElement, "type");
                     propertyNodeType = type;
-                    this._cellProperties[propertyNodeTagName] = _typeConverterMap[type];
-                    this["cell" + propertyNodeTagName] = new Function("return this.cellProperty(\"" + propertyNodeTagName + "\")");
                     break;
                 }
             }
