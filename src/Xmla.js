@@ -2031,7 +2031,27 @@ Xmla.prototype = {
             var responseXml = this.getResponseXML();
             var soapFault = _getElementsByTagNameNS(responseXml, _xmlnsSOAPenvelope, _xmlnsSOAPenvelopePrefix, "Fault");
             if (soapFault.length) {
-                //just return the entire soap response which has the details of the fault
+
+              try {
+                console.log('Parsing fault...');
+                var faultCode = _getElementsByTagNameNS(soapFault[0], _xmlnsSOAPenvelope, _xmlnsSOAPenvelopePrefix, "faultcode")[0].childNodes[0].data;
+                var faultString =  _getElementsByTagNameNS(soapFault[0], _xmlnsSOAPenvelope, _xmlnsSOAPenvelopePrefix, "faultstring")[0].childNodes[0].data;
+                console.log('Parsed fault.');
+                console.log('faultCode = ' + faultCode);
+                console.log('faultString = ' + faultString);
+
+                request.exception = new Xmla.Exception(
+                    Xmla.Exception.TYPE_ERROR,
+                    'Soap fault',
+                    faultString,
+                    faultCode,
+                    "_requestSuccess",
+                    request
+                );
+              }
+              catch (exception) {
+                console.log('Caught an exception when trying to parse soap fault.');
+
                 request.exception = new Xmla.Exception(
                     Xmla.Exception.TYPE_ERROR,
                     'Soap fault',
@@ -2040,6 +2060,7 @@ Xmla.prototype = {
                     "_requestSuccess",
                     request
                 );
+              }
             }
             else {
                 switch(method){
