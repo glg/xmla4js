@@ -6441,10 +6441,16 @@ Xmla.Dataset.Axis.prototype = {
         for (i = 0; i < n; i++) {
             el = childNodes[i];
             if (el.nodeType !== 1 || (!(property = memberProperties[el.nodeName]))) continue;
-            if (_isUnd(property.converter))
-                member[property.name] =  _getElementText(el);
-            else
+            if (_isUnd(property.converter)) {
+				var type = _getAttributeNS(el, _xmlnsSchemaInstance, _xmlnsSchemaInstancePrefix, "type");
+				if (_isUnd(type))
+					member[property.name] = _getElementText(el);
+				else
+					member[property.name] = _typeConverterMap[type](_getElementText(el));
+			}
+            else {
                 member[property.name] = property.converter(_getElementText(el));
+			}
         }
         return member;
     },
@@ -6629,11 +6635,7 @@ Xmla.Dataset.Cellset.prototype = {
                     break;
                 }
             }
-            //default to string if the property type is not found
-            if (!propertyNodeType){
-                propertyNodeType = 'xsd:string';
-            }
-            this._cellProperties[propertyNodeTagName] = _typeConverterMap['xsd:string'];
+	    this._cellProperties[propertyNodeTagName] = _typeConverterMap[propertyNodeType];
             this["cell" + propertyNodeTagName] = new Function("return this.cellProperty(\"" + propertyNodeTagName + "\")");
         }
         this._cellNodes = _getElementsByTagNameNS(
