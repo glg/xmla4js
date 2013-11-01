@@ -6648,8 +6648,8 @@ Xmla.Dataset.Cellset.prototype = {
 		//console.debug(index);
         if (!_isUnd(index)) this._idx = index;
         this._cellNode = this._cellNodes[this._idx];
-        this._cellOrd = this._getCellOrdinal(this._cellNode);
-    },
+		if (!_isUnd(this._cellNode)) this._cellOrd = this._getCellOrdinal(this._cellNode);
+    },	
     _getCellOrdinal: function(node){
         return parseInt(_getAttribute(node, "CellOrdinal"), 10);
     },
