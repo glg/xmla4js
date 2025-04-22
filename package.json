@@ -2,7 +2,6 @@
   "name": "xmla4js",
   "version": "0.0.1",
   "description": "Javascript interface for XML for Analysis",
-  "main": "Xmla.js",
   "directories": {
     "doc": "doc"
   },
